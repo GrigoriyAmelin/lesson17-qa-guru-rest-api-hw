@@ -32,11 +32,11 @@ tasks.withType(Test) {
         ]
     }
 
-//    testLogging {
-//        lifecycle {
-////            events "started", "skipped"
-//            events "STARTED", "SKIPPED", "FAILED", "STANDARD_ERROR", "STANDARD_OUT", "PASSED"
-//            exeptionFormat "SHORT"
-//        }
-//    }
+    testLogging {
+        lifecycle {
+//            events "started", "skipped"
+            events "STARTED", "SKIPPED", "FAILED", "STANDARD_ERROR", "STANDARD_OUT", "PASSED"
+            exceptionFormat "short"
+        }
+    }
 }

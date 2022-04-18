@@ -1,13 +1,14 @@
 package tests;
 
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import static io.restassured.RestAssured.get;
+import java.util.stream.Stream;
+
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.hasKey;
@@ -18,21 +19,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ReqresinNewTests {
 
     @Test
-    @DisplayName("Создание нового пользователя с внутренними проверками")
+    @DisplayName("Создание нового пользователя (внутренние проверки)")
     void createNewUser() {
-        /*
-        request: https://reqres.in/api/users
 
-        data: {"name": "gregorrr", "job": "QA"}
+//        request: https://reqres.in/api/users
 
-        response:
-        {
-        "name": "gregorrr",
-        "job": "QA",
-        "id": "912",
-        "createdAt": "2022-04-18T15:00:24.175Z"
-        }
-         */
+//        data: {"name": "gregorrr", "job": "QA"}
+
+//        response: {"name": "gregorrr", "job": "QA", "id": "912", "createdAt": "2022-04-18T15:00:24.175Z"}
 
         String registrationData = "{ \"name\": \"gregorrr\", \"job\": \"QA\" }";
 
@@ -50,7 +44,7 @@ public class ReqresinNewTests {
     }
 
     @Test
-    @DisplayName("Создание нового пользователя с внешними проверками")
+    @DisplayName("Создание нового пользователя (внешние проверки)")
     void createNewUserWithOutsideCheck() {
 
         String registrationData = "{ \"name\": \"gregorrr\", \"job\": \"QA\" }";
@@ -76,7 +70,7 @@ public class ReqresinNewTests {
 
 
     @Test
-    @DisplayName("Обновление данных пользователя с внешними проверками")
+    @DisplayName("Обновление данных пользователя (внешние проверки)")
     void updateNewUserWithOutsideCheck() {
 
         String registrationData = "{ \"name\": \"gregorrr\", \"job\": \"PHD\" }";
@@ -99,29 +93,37 @@ public class ReqresinNewTests {
         System.out.println("New user job: " + response.path("job") + "\n");
     }
 
-    @ValueSource(strings = {"https://reqres.in/api/users?page=1", "https://reqres.in/api/users?page=2"})
+    static Stream<Arguments> getListOfUsersWithOutsideCheck() {
+        return Stream.of(
+                Arguments.of(1, 1, "george.bluth@reqres.in"),
+                Arguments.of(2, 7, "michael.lawson@reqres.in")
+        );
+    }
+
+    @MethodSource(value = "getListOfUsersWithOutsideCheck")
     @ParameterizedTest(name = "Получение списка пользователей на странице \"{0}\"")
-    @DisplayName("Получение списка пользователей")
-    void getListOfUsersWithOutsideCheck(int testData) {
+    @DisplayName("Получение списка пользователей (внешние проверки)")
+    void getListOfUsersWithOutsideCheck(int pageNumber, int idNumber, String userEmail) {
 
         Response response = given()
                 .when()
-                .get(String.valueOf(testData))
+                .get("https://reqres.in/api/users?page=" + pageNumber)
                 .then()
                 .extract().response();
 
         assertEquals(response.getStatusCode(), 200);
-        assertEquals(response.path("page"), String.valueOf(testData));
+        assertEquals((Integer) response.path("page"), pageNumber);
+        assertEquals((Integer) response.path("data.id[0]"), idNumber);
+        assertEquals(response.path("data.email[0]"), userEmail);
 
-
-//        System.out.println("\n" + "Response: " + response.asString());
-//        System.out.println("Response code: " + response.getStatusCode());
-//        System.out.println("New user job: " + response.path("job") + "\n");
+        System.out.println("\n" + "Response: " + response.asString());
+        System.out.println("Response code: " + response.getStatusCode());
+        System.out.println("User email: " + response.path("data.email[0]") + "\n");
     }
 
     @Test
-    @DisplayName("Получение списка пользователей")
-    void getListOfUsers() {
+    @DisplayName("Получение списка пользователей (внутренние проверки)")
+    void getListOfUsersCheck() {
 
         given()
                 .when()
@@ -129,70 +131,23 @@ public class ReqresinNewTests {
                 .then()
                 .statusCode(200)
                 .body("page", is(2))
-                .body("data.id[0]", is(7));
+                .body("data.id[0]", is(7))
+                .body("data.email[1]", is("lindsay.ferguson@reqres.in"));
     }
 
-//    @Test
-////    @DisplayName("Получение количества зарегистрированных пользователей")
-//    void getListOfUsers() {
-//        /*
-//        request: https://reqres.in/api/register
-//
-//        data:
-//        {
-//        "email": "gregorrr@rmail.ru",
-//        "password": "qwerty123"
-//        }
-//
-//        response:
-//        {
-//        "id": 4,
-//        "token": "QpwL5tke4Pnpja7X4"
-//        }
-//         */
-//
-//        String authorizedData = "{\"email\": \"eve.holt@reqres.in\", " +
-//                "\"password\": \"cityslicka\"}";
-//
-//        given()
-//                .body(authorizedData)
-//                .contentType(JSON)
-//                .when()
-//                .post("https://reqres.in/api/login")
-//                .then()
-//                .statusCode(200)
-//                .body("token", is("QpwL5tke4Pnpja7X4"));
-//    }
+    @Test
+    @DisplayName("Успешный вход (внутренние проверки)")
+    void loginSuccessfulCheck() {
 
-//    @Test
-//    void successfulRegister() {
-//        /*
-//        request: https://reqres.in/api/register
-//
-//        data:
-//        {
-//        "email": "gregorrr@rmail.ru",
-//        "password": "qwerty123"
-//        }
-//
-//        response:
-//        {
-//        "id": 4,
-//        "token": "QpwL5tke4Pnpja7X4"
-//        }
-//         */
-//
-//        String authorizedData = "{\"email\": \"eve.holt@reqres.in\", " +
-//                "\"password\": \"cityslicka\"}";
-//
-//        given()
-//                .body(authorizedData)
-//                .contentType(JSON)
-//                .when()
-//                .post("https://reqres.in/api/login")
-//                .then()
-//                .statusCode(200)
-//                .body("token", is("QpwL5tke4Pnpja7X4"));
-//    }
+        String userCredentials = "{ \"email\": \"tobias.funke@reqres.in\", \"password\": \"1234\" }";
 
+        given()
+                .when()
+                .body(userCredentials)
+                .contentType(JSON)
+                .post("https://reqres.in/api/login")
+                .then()
+                .statusCode(200)
+                .body("token", is("QpwL5tke4Pnpja7X9"));
+    }
 }

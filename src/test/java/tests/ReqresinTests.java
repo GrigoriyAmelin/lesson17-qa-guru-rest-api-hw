@@ -1,5 +1,6 @@
 package tests;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
@@ -12,13 +13,11 @@ public class ReqresinTests {
     void successfulLogin() {
         /*
         request: https://reqres.in/api/login
-
         data:
         {
         "email": "eve.holt@reqres.in",
         "password": "cityslicka"
         }
-
         response:
         {
         "token": "QpwL5tke4Pnpja7X4"
@@ -65,7 +64,4 @@ public class ReqresinTests {
                 .statusCode(400)
                 .body("error", is("Missing password"));
     }
-
-
-
 }

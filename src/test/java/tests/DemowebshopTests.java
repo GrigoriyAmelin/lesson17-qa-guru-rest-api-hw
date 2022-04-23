@@ -11,7 +11,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class DemowebshopTests {
 
     @Test
-    void addToCardAsNewUserTest() {
+    void addToCartAsNewUserTest() {
         given()
                 .contentType("application/x-www-form-urlencoded; charset=UTF-8")
                 .body("product_attribute_72_5_18=53" +
@@ -30,7 +30,7 @@ public class DemowebshopTests {
     }
 
     @Test
-    void addToCardWithCookieTest() {
+    void addToCartWithCookieTest() {
         given()
                 .contentType("application/x-www-form-urlencoded; charset=UTF-8")
                 .cookie("Nop.customer=4a270881-47e7-42c9-a179-438c242fa564; " +
@@ -51,7 +51,7 @@ public class DemowebshopTests {
     }
 
     @Test
-    void addToCardTestWithInt() {
+    void addToCartTestWithInt() {
         Integer cartSize = 0;
 
         ValidatableResponse response =

@@ -10,7 +10,7 @@ public class TestBase {
     public static final String secondJob = "PHD";
 
     @BeforeAll
-    static void precondition() {
+    static void preconditionMathod() {
         RestAssured.baseURI = "https://reqres.in/api";
     }
 }

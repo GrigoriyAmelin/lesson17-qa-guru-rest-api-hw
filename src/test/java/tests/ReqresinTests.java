@@ -1,8 +1,6 @@
 package tests;
 
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,11 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ReqresinTests extends TestBase{
-
-    @BeforeEach
-    public void precondition() {
-        RestAssured.baseURI = "https://reqres.in/api";
-    }
 
     @Test
     @DisplayName("Создание нового пользователя (внутренние проверки)")
